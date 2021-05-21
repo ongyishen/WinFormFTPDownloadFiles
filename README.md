@@ -15,7 +15,7 @@ alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box
 
 
 
-## Nuget Package
+## Thanks to following NuGet Package
 
 [CoreFtp](https://github.com/sparkeh9/CoreFTP)
 
