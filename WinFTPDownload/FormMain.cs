@@ -126,31 +126,43 @@ namespace WinFTPDownload
                     return;
                 }
 
-                progressBar1.Value = 0;
-                progressBar1.Maximum = DownloadFileList.Count;
-                Application.DoEvents();
-                int iTotal = DownloadFileList.Count;
+
                 int iCount = 1;
-                foreach (var file in DownloadFileList)
+                var selectedList = DownloadFileList.Where(x => x.IsDownload).ToList();
+
+                progressBar1.Value = 0;
+                progressBar1.Maximum = selectedList.Count;
+                Application.DoEvents();
+                int iTotal = selectedList.Count;
+
+                if (iTotal > 0)
                 {
-                    lblStatus.Text = $"{iCount++} / {iTotal}";
-
-                    var localPath = new FileInfo(Path.Combine(myConfig.DownloadPath, file.Name));
-                    using (var ftpReadStream = await ftpClient.OpenFileReadStreamAsync(file.Name))
+                    foreach (var file in selectedList)
                     {
-                        using (var fileWriteStream = localPath.OpenWrite())
+                        lblStatus.Text = $"{iCount++} / {iTotal}";
+
+                        var localPath = new FileInfo(Path.Combine(myConfig.DownloadPath, file.Name));
+                        using (var ftpReadStream = await ftpClient.OpenFileReadStreamAsync(file.Name))
                         {
+                            using (var fileWriteStream = localPath.OpenWrite())
+                            {
 
 
-                            await ftpReadStream.CopyToAsync(fileWriteStream);
+                                await ftpReadStream.CopyToAsync(fileWriteStream);
+                            }
                         }
-                    }
 
-                    progressBar1.Increment(1);
-                    Application.DoEvents();
+                        progressBar1.Increment(1);
+                        Application.DoEvents();
+                    }
+                    "Done".AlertInfo();
                 }
 
-                "Done".AlertInfo();
+                else
+                {
+                    "Nothing to download".AlertError();
+                }
+
             }
             catch (Exception ex)
             {
@@ -250,10 +262,15 @@ namespace WinFTPDownload
 
         private void chkSelectAll_CheckedChanged(object sender, EventArgs e)
         {
-            foreach (var item in DownloadFileList)
+            if (DownloadFileList != null)
             {
-                item.IsDownload = chkSelectAll.Checked;
+                foreach (var item in DownloadFileList)
+                {
+                    item.IsDownload = chkSelectAll.Checked;
+                }
             }
+
+            dataGridView1.Refresh();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
