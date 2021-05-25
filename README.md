@@ -1,5 +1,5 @@
 # WinFormFTPDownloadFiles
-Window Form Program to download files from FTP Server (.net framework 4.5.2)
+C# Window Form Program to download files from FTP Server (.net framework 4.5.2)
 
 ## Donation
 
